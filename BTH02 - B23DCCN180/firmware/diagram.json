@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "author": "Nguyen Minh Duc",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 52.7, "left": -120.2, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": 15.6, "left": 368.6, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": 99.4, "left": 315.95, "rotate": 270, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht1", "top": -143.7, "left": -15, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -132.9, "left": 187.9, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+    [ "dht1:VCC", "esp:3V3", "red", [ "v28.8", "h48", "v211.2" ] ],
+    [ "dht1:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "dht1:SDA", "esp:D15", "green", [ "v0" ] ],
+    [ "ultrasonic1:GND", "esp:GND.2", "black", [ "v316.8", "h-452.4", "v-76.7" ] ],
+    [ "ultrasonic1:TRIG", "esp:D5", "blue", [ "v0" ] ],
+    [ "ultrasonic1:ECHO", "esp:D18", "orange", [ "v0" ] ],
+    [ "ultrasonic1:VCC", "esp:VIN", "red", [ "v67.2", "h-393.6", "v182.4" ] ],
+    [ "esp:D2", "r1:1", "green", [ "h0" ] ],
+    [ "r1:2", "led1:A", "green", [ "h0" ] ],
+    [ "led1:C", "esp:GND.2", "black", [ "v201.6", "h-566", "v-57.5" ] ]
+  ],
+  "dependencies": {}
+}

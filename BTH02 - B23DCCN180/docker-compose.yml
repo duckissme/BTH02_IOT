@@ -1,0 +1,43 @@
+# Chạy:  docker compose up -d                      (InfluxDB + Grafana)
+#        docker compose --profile local-broker up -d   (thêm Mosquitto cục bộ)
+services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: iot-influxdb
+    ports: ["8086:8086"]
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_ADMIN_USER}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_ADMIN_PASSWORD}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET_RAW}
+      DOCKER_INFLUXDB_INIT_RETENTION: 30d          # retention của bucket dữ liệu thô
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN}
+    volumes:
+      - influx-data:/var/lib/influxdb2
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: iot-grafana
+    ports: ["3000:3000"]
+    environment:
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
+      INFLUXDB_ORG: ${INFLUXDB_ORG}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on: [influxdb]
+    restart: unless-stopped
+
+  mosquitto:                     # chỉ dùng khi test cục bộ bằng simulator
+    image: eclipse-mosquitto:2
+    profiles: ["local-broker"]
+    ports: ["1883:1883"]
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    restart: unless-stopped
+
+volumes:
+  influx-data:
+  grafana-data:
